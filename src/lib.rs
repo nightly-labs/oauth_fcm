@@ -5,6 +5,8 @@ pub use error::FcmError;
 pub use error::NetworkError;
 pub use fcm::send_fcm_message;
 pub use fcm::send_fcm_message_with_url;
+pub use fcm::AndroidConfig;
+pub use fcm::AndroidFcmOptions;
 pub use fcm::ApnsConfig;
 pub use fcm::ApnsFcmOptions;
 pub use fcm::FcmNotification;
