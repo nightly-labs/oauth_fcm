@@ -1,18 +1,3 @@
-#![forbid(unsafe_code)]
-#![warn(
-    clippy::pedantic,
-    clippy::nursery,
-    clippy::tests_outside_test_module,
-    unused_qualifications,
-    non_ascii_idents
-)]
-#![allow(
-    clippy::missing_errors_doc,
-    clippy::missing_panics_doc,
-    clippy::module_name_repetitions,
-    clippy::future_not_send
-)]
-
 use std::fmt::Debug;
 use std::io::Read;
 

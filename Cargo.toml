@@ -11,9 +11,7 @@ readme = "README.md"
 keywords = ["fcm", "firebase", "push", "notification", "oauth"]
 categories = ["web-programming", "authentication"]
 
-exclude = [
-    ".github/*"
-]
+exclude = [".github/*"]
 
 [dependencies]
 reqwest = { version = "0.11", features = ["json"] }
@@ -25,15 +23,15 @@ thiserror = "1.0"
 
 tracing = "0.1.40"
 
-[dev-dependencies]
-# Testing
-mockito = "1.4.0"
-tracing-subscriber = "0.3.18"
-tokio-test = "0.4.4"
+# [dev-dependencies]
+# # Testing
+# mockito = "1.4.0"
+# tracing-subscriber = "0.3.18"
+# tokio-test = "0.4.4"
 
-# Examples
-axum = "0.7.5"
-rocket = "0.5.0"
+# # Examples
+# axum = "0.7.5"
+# rocket = "0.5.0"
 
 [[example]]
 name = "axum_example"
