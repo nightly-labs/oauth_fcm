@@ -39,6 +39,203 @@ pub struct ApnsFcmOptions {
     pub image: Option<String>,
 }
 
+/// Android-specific options for FCM messages
+#[derive(Debug, Clone, Serialize)]
+pub struct AndroidConfig {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub collapse_key: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub priority: Option<AndroidMessagePriority>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ttl: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub restricted_package_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub data: Option<HashMap<String, String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub notification: Option<AndroidNotification>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub fcm_options: Option<AndroidFcmOptions>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub direct_boot_ok: Option<bool>,
+}
+
+/// Android message priority
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum AndroidMessagePriority {
+    Normal,
+    High,
+}
+
+/// Android notification configuration
+#[derive(Debug, Clone, Serialize)]
+pub struct AndroidNotification {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub body: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sound: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tag: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub click_action: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub channel_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ticker: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sticky: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub notification_priority: Option<NotificationPriority>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub default_sound: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub default_vibrate_timings: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub default_light_settings: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub image: Option<String>,
+}
+
+/// Android notification priority
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum NotificationPriority {
+    PriorityUnspecified,
+    PriorityMin,
+    PriorityLow,
+    PriorityDefault,
+    PriorityHigh,
+    PriorityMax,
+}
+
+/// Android FCM options
+#[derive(Debug, Clone, Serialize)]
+pub struct AndroidFcmOptions {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub analytics_label: Option<String>,
+}
+
+impl AndroidConfig {
+    /// Create a new AndroidConfig with default values
+    pub fn new() -> Self {
+        Self {
+            collapse_key: None,
+            priority: None,
+            ttl: None,
+            restricted_package_name: None,
+            data: None,
+            notification: None,
+            fcm_options: None,
+            direct_boot_ok: None,
+        }
+    }
+
+    /// Create an AndroidConfig for silent data messages (high priority)
+    pub fn silent_data_message() -> Self {
+        Self {
+            collapse_key: None,
+            priority: Some(AndroidMessagePriority::High),
+            ttl: None,
+            restricted_package_name: None,
+            data: None,
+            notification: None,
+            fcm_options: None,
+            direct_boot_ok: None,
+        }
+    }
+
+    /// Set Android message priority
+    pub fn with_priority(mut self, priority: AndroidMessagePriority) -> Self {
+        self.priority = Some(priority);
+        self
+    }
+
+    /// Set collapse key for message grouping
+    pub fn with_collapse_key(mut self, collapse_key: String) -> Self {
+        self.collapse_key = Some(collapse_key);
+        self
+    }
+
+    /// Set time to live (TTL)
+    pub fn with_ttl(mut self, ttl: String) -> Self {
+        self.ttl = Some(ttl);
+        self
+    }
+
+    /// Set Android-specific data
+    pub fn with_data(mut self, data: HashMap<String, String>) -> Self {
+        self.data = Some(data);
+        self
+    }
+
+    /// Set Android notification options
+    pub fn with_notification(mut self, notification: AndroidNotification) -> Self {
+        self.notification = Some(notification);
+        self
+    }
+
+    /// Set Android FCM options
+    pub fn with_fcm_options(mut self, fcm_options: AndroidFcmOptions) -> Self {
+        self.fcm_options = Some(fcm_options);
+        self
+    }
+
+    /// Enable direct boot mode
+    pub fn with_direct_boot_ok(mut self, direct_boot_ok: bool) -> Self {
+        self.direct_boot_ok = Some(direct_boot_ok);
+        self
+    }
+}
+
+impl AndroidNotification {
+    /// Create a new AndroidNotification
+    pub fn new() -> Self {
+        Self {
+            title: None,
+            body: None,
+            icon: None,
+            color: None,
+            sound: None,
+            tag: None,
+            click_action: None,
+            channel_id: None,
+            ticker: None,
+            sticky: None,
+            notification_priority: None,
+            default_sound: None,
+            default_vibrate_timings: None,
+            default_light_settings: None,
+            image: None,
+        }
+    }
+
+    /// Set notification title and body
+    pub fn with_title_and_body(mut self, title: String, body: String) -> Self {
+        self.title = Some(title);
+        self.body = Some(body);
+        self
+    }
+
+    /// Set notification priority
+    pub fn with_priority(mut self, priority: NotificationPriority) -> Self {
+        self.notification_priority = Some(priority);
+        self
+    }
+
+    /// Set notification channel ID
+    pub fn with_channel_id(mut self, channel_id: String) -> Self {
+        self.channel_id = Some(channel_id);
+        self
+    }
+}
+
 impl ApnsConfig {
     /// Create a new ApnsConfig with default values
     pub fn new() -> Self {
@@ -108,6 +305,7 @@ impl ApnsConfig {
 ///   body of the notification.
 /// * `data_payload` - Optional data represented as a Map. This can be any type
 ///   that implements the `Serialize` trait.
+/// * `android_config` - Optional Android-specific configuration for Android devices.
 /// * `apns_config` - Optional APNS-specific configuration for iOS devices.
 /// * `token_manager` - A `SharedTokenManager` to handle OAuth tokens.
 /// * `project_id` - The ID of the Firebase project, where the device token is
@@ -133,10 +331,11 @@ impl ApnsConfig {
 ///    title: "Test Title".to_string(),
 ///   body: "Test Body".to_string(),
 /// };
+/// let android_config = Some(AndroidConfig::silent_data_message());
 /// let apns_config = Some(ApnsConfig::silent_push());
 /// let token_manager = create_shared_token_manager(File::open("path_to_google_credentials.json").expect("Failed to open file")).expect("Failed to create SharedTokenManager");
 /// let project_id = "project_id";
-/// send_fcm_message(device_token, Some(notification), Some(data), apns_config, &token_manager, project_id)
+/// send_fcm_message(device_token, Some(notification), Some(data), android_config, apns_config, &token_manager, project_id)
 ///     .await
 ///     .expect("Error while sending FCM message");
 ///
@@ -144,12 +343,13 @@ impl ApnsConfig {
 /// ```
 #[instrument(
     level = "info",
-    skip(data_payload, notification, apns_config, token_manager)
+    skip(data_payload, notification, android_config, apns_config, token_manager)
 )]
 pub async fn send_fcm_message<T: Serialize>(
     device_token: &str,
     notification: Option<FcmNotification>,
     data_payload: Option<T>,
+    android_config: Option<AndroidConfig>,
     apns_config: Option<ApnsConfig>,
     token_manager: &SharedTokenManager,
     project_id: &str,
@@ -161,6 +361,7 @@ pub async fn send_fcm_message<T: Serialize>(
         device_token,
         notification,
         data_payload,
+        android_config,
         apns_config,
         token_manager,
         &url,
@@ -177,12 +378,13 @@ pub async fn send_fcm_message<T: Serialize>(
 /// useful for testing, such as for mocking the FCM URL.
 #[instrument(
     level = "debug",
-    skip(data_payload, notification, apns_config, token_manager)
+    skip(data_payload, notification, android_config, apns_config, token_manager)
 )]
 pub async fn send_fcm_message_with_url<T: Serialize>(
     device_token: &str,
     notification: Option<FcmNotification>,
     data_payload: Option<T>,
+    android_config: Option<AndroidConfig>,
     apns_config: Option<ApnsConfig>,
     token_manager: &SharedTokenManager,
     fcm_url: &str,
@@ -194,7 +396,13 @@ pub async fn send_fcm_message_with_url<T: Serialize>(
 
     let client = reqwest::Client::new();
 
-    let payload = create_payload(device_token, notification, data_payload, apns_config)?;
+    let payload = create_payload(
+        device_token,
+        notification,
+        data_payload,
+        android_config,
+        apns_config,
+    )?;
 
     debug!("Requesting access token");
 
@@ -229,6 +437,7 @@ fn create_payload<T: Serialize>(
     device_token: &str,
     notification: Option<FcmNotification>,
     data_payload: Option<T>,
+    android_config: Option<AndroidConfig>,
     apns_config: Option<ApnsConfig>,
 ) -> Result<serde_json::Value, FcmError> {
     // Start with base message
@@ -250,15 +459,22 @@ fn create_payload<T: Serialize>(
         message["data"] = data;
     }
 
+    // Add Android config if provided
+    if let Some(android_config) = android_config {
+        message["android"] =
+            serde_json::to_value(android_config).map_err(FcmError::SerializationError)?;
+    }
+
     // Add APNS config if provided
     if let Some(apns_config) = apns_config {
         message["apns"] =
             serde_json::to_value(apns_config).map_err(FcmError::SerializationError)?;
     }
 
-    // Validate that we have at least one of: notification, data, or apns
+    // Validate that we have at least one of: notification, data, android, or apns
     if message.get("notification").is_none()
         && message.get("data").is_none()
+        && message.get("android").is_none()
         && message.get("apns").is_none()
     {
         return Err(FcmError::FcmInvalidPayloadError);
@@ -284,7 +500,7 @@ fn create_payload<T: Serialize>(
 //             "key": "value"
 //         }));
 
-//         let payload = create_payload(device_token, notification, data_payload, None).unwrap();
+//         let payload = create_payload(device_token, notification, data_payload, None, None).unwrap();
 //         assert_eq!(payload["message"]["token"], device_token);
 //         assert_eq!(payload["message"]["notification"]["title"], "Test Title");
 //         assert_eq!(payload["message"]["notification"]["body"], "Test Body");
@@ -300,7 +516,7 @@ fn create_payload<T: Serialize>(
 //         });
 //         let data_payload: Option<serde_json::Value> = None;
 
-//         let payload = create_payload(device_token, notification, data_payload, None).unwrap();
+//         let payload = create_payload(device_token, notification, data_payload, None, None).unwrap();
 //         assert_eq!(payload["message"]["token"], device_token);
 //         assert_eq!(payload["message"]["notification"]["title"], "Test Title");
 //         assert_eq!(payload["message"]["notification"]["body"], "Test Body");
@@ -315,7 +531,7 @@ fn create_payload<T: Serialize>(
 //             "key": "value"
 //         }));
 
-//         let payload = create_payload(device_token, notification, data_payload, None).unwrap();
+//         let payload = create_payload(device_token, notification, data_payload, None, None).unwrap();
 //         assert_eq!(payload["message"]["token"], device_token);
 //         assert!(payload["message"]["notification"].is_null());
 //         assert_eq!(payload["message"]["data"]["key"], "value");
@@ -328,11 +544,13 @@ fn create_payload<T: Serialize>(
 //         let data_payload = Some(json!({
 //             "key": "value"
 //         }));
+//         let android_config = Some(AndroidConfig::silent_data_message());
 //         let apns_config = Some(ApnsConfig::silent_push());
 
-//         let payload = create_payload(device_token, notification, data_payload, apns_config).unwrap();
+//         let payload = create_payload(device_token, notification, data_payload, android_config, apns_config).unwrap();
 //         assert_eq!(payload["message"]["token"], device_token);
 //         assert_eq!(payload["message"]["apns"]["payload"]["aps"]["content-available"], 1);
+//         assert_eq!(payload["message"]["android"]["priority"], "HIGH");
 //         assert_eq!(payload["message"]["data"]["key"], "value");
 //     }
 
@@ -351,7 +569,7 @@ fn create_payload<T: Serialize>(
 //             key2: "value2".to_string(),
 //         };
 
-//         let payload = create_payload(device_token, notification, Some(data_payload), None).unwrap();
+//         let payload = create_payload(device_token, notification, Some(data_payload), None, None).unwrap();
 //         assert_eq!(payload["message"]["token"], device_token);
 //         assert!(payload["message"]["notification"].is_null());
 //         assert_eq!(payload["message"]["data"]["key1"], "value1");
@@ -364,7 +582,7 @@ fn create_payload<T: Serialize>(
 //         let notification: Option<FcmNotification> = None;
 //         let data_payload: Option<serde_json::Value> = None;
 
-//         let payload = create_payload(device_token, notification, data_payload, None);
+//         let payload = create_payload(device_token, notification, data_payload, None, None);
 //         assert!(payload.is_err());
 //     }
 
@@ -375,9 +593,23 @@ fn create_payload<T: Serialize>(
 //         let data_payload: Option<serde_json::Value> = None;
 //         let apns_config = Some(ApnsConfig::silent_push());
 
-//         let payload = create_payload(device_token, notification, data_payload, apns_config).unwrap();
+//         let payload = create_payload(device_token, notification, data_payload, None, apns_config).unwrap();
 //         assert_eq!(payload["message"]["token"], device_token);
 //         assert_eq!(payload["message"]["apns"]["payload"]["aps"]["content-available"], 1);
+//         assert!(payload["message"]["notification"].is_null());
+//         assert!(payload["message"]["data"].is_null());
+//     }
+
+//     #[tokio::test]
+//     async fn test_create_payload_with_only_android() {
+//         let device_token = "test_device_token";
+//         let notification: Option<FcmNotification> = None;
+//         let data_payload: Option<serde_json::Value> = None;
+//         let android_config = Some(AndroidConfig::silent_data_message());
+
+//         let payload = create_payload(device_token, notification, data_payload, android_config, None).unwrap();
+//         assert_eq!(payload["message"]["token"], device_token);
+//         assert_eq!(payload["message"]["android"]["priority"], "HIGH");
 //         assert!(payload["message"]["notification"].is_null());
 //         assert!(payload["message"]["data"].is_null());
 //     }
